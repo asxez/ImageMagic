@@ -1,10 +1,10 @@
-from setuptools import setup
+from setuptools import setup,find_packages
 
 
 setup(
     name='ImageMagic',
-    version='0.1.0',
-    packages=[''],
+    version='0.1.1',
+    packages=find_packages(),
     url='https://github.com/asxez/ImageMagic',
     license='MIT',
     author='asxe',
