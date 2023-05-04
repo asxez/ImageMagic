@@ -1,4 +1,4 @@
-from ImageMagic.Atesseract import *
+from ImageMagic._Atesseract import *
 from PIL import Image
 
 

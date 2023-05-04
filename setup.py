@@ -3,7 +3,7 @@ from setuptools import setup,find_packages
 
 setup(
     name='ImageMagic',
-    version='0.1.3',
+    version='0.1.5',
     packages=find_packages(),
     url='https://github.com/asxez/ImageMagic',
     license='MIT',
