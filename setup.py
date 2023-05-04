@@ -5,7 +5,7 @@ setup(
     name='ImageMagic',
     version='0.1.0',
     packages=[''],
-    url='',
+    url='https://github.com/asxez/ImageMagic',
     license='MIT',
     author='asxe',
     author_email='2973918177@qq.com',
