@@ -1,0 +1,9 @@
+Metadata-Version: 2.1
+Name: ImageMagic
+Version: 0.1.0
+Summary: 图像处理库（包括但不限于图像）
+Home-page: 
+Author: asxe
+Author-email: 2973918177@qq.com
+License: MIT
+License-File: LICENSE
