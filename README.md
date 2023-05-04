@@ -3,7 +3,7 @@
 </div>
 
 # ImageMagic:一个简洁的图像（包括但不限于）处理库
-[![Pypi](https://img.shields.io/badge/pypi-0.1.0-blue)]()
+[![Pypi](https://img.shields.io/badge/pypi-0.1.3-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-yellow)]()
 [![]()]()
 
@@ -11,11 +11,19 @@
 ImageMagic是Python的一个包，提供简洁的图像（包括但不限于）处理功能，主要体现为简洁二字。
 
 # 获取
+1. 使用pip下载
+```
+pip install ImageMagic
+```
+
+2. 或者，你也可以从[源](https://github.com/asxez/ImageMagic)进行构建
 
 # 依赖
   - [PIL](https://github.com/python-pillow/Pillow)
   - [Tesseract-OCR](https://tesseract-ocr.github.io/tessdoc/Installation.html)
-
+  - [numpy](https://github.com/numpy/numpy)
+  - [pandas](https://github.com/pandas-dev/pandas)
+  - ……
 
 # 许可证
 GNU GPL
