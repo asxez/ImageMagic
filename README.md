@@ -2,6 +2,8 @@
   <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450"><br>
 </div>
 
+[DOCS in English](https://github.com/asxez/ImageMagic/blob/master/README_EN.md)
+
 # ImageMagic:一个简洁的图像（包括但不限于）处理库
 [![Pypi](https://img.shields.io/badge/pypi-0.1.3-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-yellow)]()
