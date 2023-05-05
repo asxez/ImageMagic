@@ -107,6 +107,54 @@ def convert(originFilePath,format,savePath,mode=None):
     image.save(savePath,format=format)
 
 
+def equal_scale_image(filePath,savePath,multiple=1):
+
+    """
+    Change your image in equal proportions
+    Args:
+        filePath: Original file path
+        savePath: The path to the save
+        multiple: The multiplier of the change
+
+    Returns:
+        None
+    """
+
+    img = PILImage.open(filePath)
+    width = img.size[0]
+    height = img.size[1]
+    img = img.resize((int(width * multiple), int(height * multiple)), PILImage.Resampling.LANCZOS)
+    img.save(savePath)
+
+
+def customize_image(filePath,savePath,new_width=None,new_height=None):
+
+    """
+    Custom image size (if no input is used, the original parameter will be used)
+    Args:
+        filePath: Original file path
+        savePath: The path to the save
+        new_width: width
+        new_height: height
+
+    Returns:
+        None
+    """
+
+    img = PILImage.open(filePath)
+    width = img.size[0]
+    height = img.size[1]
+    if new_width is None:
+        img = img.resize((int(width), int(new_height)), PILImage.Resampling.LANCZOS)
+    if new_height is None:
+        img = img.resize((int(new_width,int(height)),PILImage.Resampling.LANCZOS))
+    if new_width is None and new_height is None:
+        img = img.resize((int(width),int(height)),PILImage.Resampling.LANCZOS)
+    else:
+        img = img.resize((int(new_width),int(new_height)),PILImage.Resampling.LANCZOS)
+    img.save(savePath)
+
+
 def categorize_image(filePath):
 
     """
@@ -175,6 +223,7 @@ def categorize_image(filePath):
             except FileExistsError as error:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/another')
+
 
 class Audio:
 
