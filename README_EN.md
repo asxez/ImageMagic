@@ -3,8 +3,8 @@
 </div>
 
 # ImageMagic:A concise image (including but not limited to) processing library
-[![Pypi](https://img.shields.io/badge/pypi-0.1.3-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-yellow)]()
+[![Pypi](https://img.shields.io/badge/pypi-0.1.6-blue)]()
+[![License](https://img.shields.io/badge/license-GPL3.0-yellow)]()
 [![]()]()
 
 # What is it?
@@ -26,7 +26,7 @@ pip install ImageMagic
   - ……
 
 # License
-GNU GPL
+GNU GPL 3.0
 
 # Contribute to ImageMagic
 All contributions, bug reports, bug fixes, and enhancements and ideas are welcome.

@@ -5,8 +5,8 @@
 [DOCS in English](https://github.com/asxez/ImageMagic/blob/master/README_EN.md)
 
 # ImageMagic:一个简洁的图像（包括但不限于）处理库
-[![Pypi](https://img.shields.io/badge/pypi-0.1.3-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-yellow)]()
+[![Pypi](https://img.shields.io/badge/pypi-0.1.6-blue)]()
+[![License](https://img.shields.io/badge/license-GPL3.0-yellow)]()
 [![]()]()
 
 # 这是什么？
@@ -28,7 +28,7 @@ pip install ImageMagic
   - ……
 
 # 许可证
-GNU GPL
+GNU GPL 3.0
 
 # 为ImageMagic做贡献
 欢迎所有贡献、错误报告、错误修复以及功能增强和想法。
