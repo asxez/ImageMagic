@@ -4,7 +4,7 @@ from ImageMagic import _version
 setup(
     name='ImageMagic',
     version=_version.__version__,
-    packages=find_packages(),
+    packages=find_packages(exclude='test*'),
     url='https://github.com/asxez/ImageMagic',
     license='GNU GPL 3.0',
     author='asxe',
