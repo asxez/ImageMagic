@@ -18,6 +18,9 @@ pip install ImageMagic
 
 2. Alternatively, you can build from [source](https://github.com/asxez/ImageMagic)
 
+# DOCS
+[DOCS](https://www.asxe.vip/2023/05/05/ImageMagic%E7%9A%84API%E6%96%87%E6%A1%A3%EF%BC%88%E4%B8%AD%E6%96%87%E7%89%88%EF%BC%89/)
+
 # Dependencies
   - [PIL](https://github.com/python-pillow/Pillow)
   - [Tesseract-OCR](https://tesseract-ocr.github.io/tessdoc/Installation.html)
