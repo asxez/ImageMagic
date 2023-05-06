@@ -21,7 +21,7 @@ pip install ImageMagic
 2. 或者，你也可以从[源](https://github.com/asxez/ImageMagic)进行构建
 
 # 文档
-[文档](https://www.asxe.vip/2023/05/05/ImageMagic%E7%9A%84API%E6%96%87%E6%A1%A3%EF%BC%88%E4%B8%AD%E6%96%87%E7%89%88%EF%BC%89/)
+[文档](https://www.asxe.vip/2023/05/05/ImageMagic%E7%9A%84API%E6%96%87%E6%A1%A3(%E4%B8%AD%E8%8B%B1%E6%96%87%E7%89%88)/)
 
 # 依赖
   - [PIL](https://github.com/python-pillow/Pillow)
