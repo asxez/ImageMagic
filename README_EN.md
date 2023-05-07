@@ -10,6 +10,16 @@
 # What is it?
 Image Magic is a package of Python that provides concise image (including but not limited to) processing functions, mainly embodied in the word concise.
 
+# What can be done?
+1. Image processing
+2. OCR function
+3. Image hash calculation
+4. Commonly used image-related features.
+   1. Image classification, is it dominated by tens of thousands of different types of pictures in a folder? If there is, then you can try me.
+   2. Only one duplicate picture is retained. In huge folders, you shouldn't manually weed out duplicate images, right?
+5. more……
+
+
 # Where to get it
 1. Download using pip
 ```
