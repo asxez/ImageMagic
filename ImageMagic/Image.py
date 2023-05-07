@@ -10,7 +10,7 @@ import time
 import os
 from loguru import logger
 import shutil
-
+import struct
 
 #They are used in the Audio class
 RESULT = None
@@ -155,6 +155,88 @@ def customize_image(filePath,savePath,new_width=None,new_height=None):
     img.save(savePath)
 
 
+def get_image_hash(image_path):
+
+    """
+    Gets the hash value of the image
+    Args:
+        image_path: Image path
+
+    Returns:
+        The hash of the image (consisting of 0 and 1)
+    """
+
+    img = PILImage.open(image_path)
+    w = img.size[0]
+    h = img.size[1]
+    img.close() #关闭img，释放资源
+
+    # 打开图像文件
+    with open(image_path, "rb") as f:
+        data = f.read()
+    # 解析图像头信息
+    width, height = struct.unpack('>II', data[16:24])
+    pixel_data = data[24:]
+
+    # 调整图像大小
+    if w > width or h > height:
+        raise ValueError("Invalid size")
+    xstep = width // w
+    ystep = height // h
+
+    # 计算像素均值并生成哈希值
+    pixels = []
+    for y in range(h):
+        for x in range(w):
+            pixel = pixel_data[((y * ystep) * width + (x * xstep)) * 3:((y * ystep) * width + (x * xstep)) * 3 + 3]
+            pixels.append(sum(pixel) / 3)
+
+    # 计算平均像素值
+    avg_pixel = sum(pixels) / len(pixels)
+
+    # 生成哈希值
+    hash_value = ""
+    for pixel in pixels:
+        if pixel > avg_pixel:
+            hash_value += "1"
+        else:
+            hash_value += "0"
+    return hash_value
+
+def remove_same_images(directoryPath):
+
+    """
+    Delete the same images in the directory, and calculate the hash value of the images to identify whether the pictures are the same.
+    Supports jpg, png, bmp, webp, jpeg, gif, svg, tif, tiff.
+    Args:
+        directoryPath: The file directory path
+
+    Returns:
+        None
+    """
+
+    # 保存图像哈希值和路径
+    hashes = {}
+
+    # 遍历目录中的所有图像
+    for filename in os.listdir(directoryPath):
+        if not filename.endswith((".jpg", ".png", ".bmp",".webp",".jpeg",".gif","svg","tif","tiff")):
+            continue
+        filepath = os.path.join(directoryPath, filename)
+
+        # 计算图像哈希值
+        hash_value = get_image_hash(filepath)
+
+        # 如果哈希值已经存在，则删除图像
+        if hash_value in hashes:
+            logger.info(f"Removing duplicate image: {filepath}")
+            os.remove(filepath)
+        else:
+            hashes[hash_value] = filepath
+
+    logger.info("Done removing duplicate images.")
+
+
 def categorize_image(filePath):
 
     """
@@ -172,55 +254,55 @@ def categorize_image(filePath):
         if ext == ".png":
             try:
                 os.makedirs(f'{filePath}/png')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath, filename), f'{filePath}/png')
         elif ext == ".jpg" or ext == 'jpeg':
             try:
                 os.makedirs(f'{filePath}/jpg')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath, filename), f'{filePath}/jpg')
         elif ext == '.webp':
             try:
                 os.makedirs(f'{filePath}/webp')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath, filename), f'{filePath}/webp')
         elif ext == 'bmp':
             try:
                 os.makedirs(f'{filePath}/bmp')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/bmp')
         elif ext == 'tif' or ext == 'tiff':
             try:
                 os.makedirs(f'{filePath}/tif')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/tif')
         elif ext == 'gif':
             try:
                 os.makedirs(f'{filePath}/gif')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/gif')
         elif ext == 'svg':
             try:
                 os.makedirs(f'{filePath}/svg')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/svg')
         elif ext == 'wmf':
             try:
                 os.makedirs(f'{filePath}/wmf')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/wmf')
         else:
             try:
                 os.makedirs(f'{filePath}/another')
-            except FileExistsError as error:
+            except FileExistsError:
                 pass
             shutil.copy(os.path.join(filePath,filename),f'{filePath}/another')
 

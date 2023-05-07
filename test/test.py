@@ -49,3 +49,10 @@ print(boxs)
 lang = Aocr.check_languages()
 print(lang)
 '''
+
+'''
+hash = Image.get_image_hash('./images/test.png')
+print(hash)
+'''
+
+#Image.remove_same_images('./images')
