@@ -50,9 +50,19 @@ lang = Aocr.check_languages()
 print(lang)
 '''
 
+#Image.remove_same_images('./images')
+
 '''
-hash = Image.get_image_hash('./images/test.png')
+hash = Image.lbp_image_hash('./images/test.png')
 print(hash)
 '''
 
-#Image.remove_same_images('./images')
+'''
+hash = Image.p_image_hash('./images/test.png')
+print(hash)
+'''
+
+'''
+hash = Image.average_image_hash('./images/test.png')
+print(hash)
+'''
