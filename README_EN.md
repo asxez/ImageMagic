@@ -1,11 +1,12 @@
 <div align="center">
-  <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450"><br>
+  <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450" alt=""><br>
 </div>
 
 # ImageMagic:A concise image (including but not limited to) processing library
-[![Pypi](https://img.shields.io/badge/pypi-0.1.6-blue)]()
+[![Pypi](https://img.shields.io/badge/pypi-0.1.9-blue)]()
 [![License](https://img.shields.io/badge/license-GPL3.0-yellow)]()
-[![]()]()
+[![Python](https://img.shields.io/badge/python-3.10%2B-yellow)]()
+
 
 # What is it?
 Image Magic is a package of Python that provides concise image (including but not limited to) processing functions, mainly embodied in the word concise.

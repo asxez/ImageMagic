@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450"><br>
+  <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450" alt=""><br>
 </div>
 
 [DOCS in English](https://github.com/asxez/ImageMagic/blob/master/README_EN.md)
 
 # ImageMagic:一个简洁的图像（包括但不限于）处理库
-[![Pypi](https://img.shields.io/badge/pypi-0.1.6-blue)]()
-[![License](https://img.shields.io/badge/license-GPL3.0-yellow)]()
-[![]()]()
+[![Pypi](https://img.shields.io/badge/pypi-0.1.9-blue)]()
+[![License](https://img.shields.io/badge/license-GPL3.0-green)]()
+[![Python](https://img.shields.io/badge/python-3.10%2B-yellow)]()
 
 # 这是什么？
 ImageMagic是Python的一个包，提供简洁的图像（包括但不限于）处理功能，主要体现为简洁二字。
