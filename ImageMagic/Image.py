@@ -10,7 +10,7 @@ import time
 import os
 from loguru import logger
 import shutil
-import struct
+import numpy as np
 
 #They are used in the Audio class
 RESULT = None
@@ -18,7 +18,7 @@ ANSWER = None
 
 
 def word_to_image(text, path, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF', LinesWords=14, fontsize=45, type='png', color=(255, 255, 255)):
-
+    #文字转图片
     """
     Let the text you enter appear on an image,
     Your text word count should preferably be greater than or equal to 10!（In cases where you use the default font size）
@@ -64,7 +64,7 @@ def word_to_image(text, path, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF', LinesWor
 
 
 def audio_to_image(appid,key,audioPath,imagePath,fontPath=r'C:\Windows\Fonts\STXIHEI.TTF'):
-
+    #音频转图片
     """
     Supports WAV, FLAC, OPUS, M4A, MP3 format audio files,
     Convert audio content into pictures, do you find this method a bit strange?
@@ -90,7 +90,7 @@ def audio_to_image(appid,key,audioPath,imagePath,fontPath=r'C:\Windows\Fonts\STX
 
 
 def convert(originFilePath,format,savePath,mode=None):
-
+    #图片格式转换
     """
     Picture format conversion, the current version supports all possible conversions between "L", "RGB" and "CMYK".
     Args:
@@ -108,7 +108,7 @@ def convert(originFilePath,format,savePath,mode=None):
 
 
 def equal_scale_image(filePath,savePath,multiple=1):
-
+    #图片等比例变化
     """
     Change your image in equal proportions
     Args:
@@ -128,7 +128,7 @@ def equal_scale_image(filePath,savePath,multiple=1):
 
 
 def customize_image(filePath,savePath,new_width=None,new_height=None):
-
+    #自定义图片分辨率
     """
     Custom image size (if no input is used, the original parameter will be used)
     Args:
@@ -155,58 +155,97 @@ def customize_image(filePath,savePath,new_width=None,new_height=None):
     img.save(savePath)
 
 
-def get_image_hash(image_path):
-
+def lbp_image_hash(imagePath):
+    #哈希局部二值算法
     """
-    Gets the hash value of the image
+    The local binary algorithm calculates the hash value.
     Args:
-        image_path: Image path
+        imagePath: Image path
 
     Returns:
         The hash of the image (consisting of 0 and 1)
     """
 
-    img = PILImage.open(image_path)
-    w = img.size[0]
-    h = img.size[1]
-    img.close() #关闭img，释放资源
+    # 打开图像并转换为灰度图像
+    with PILImage.open(imagePath) as img:
+        gray_img = img.convert('L')
 
-    # 打开图像文件
-    with open(image_path, "rb") as f:
-        data = f.read()
-    # 解析图像头信息
-    width, height = struct.unpack('>II', data[16:24])
-    pixel_data = data[24:]
+    # 缩放图像为8x8大小
+    small_img = gray_img.resize((8, 8), resample=PILImage.Resampling.BILINEAR)
 
-    # 调整图像大小
-    if w > width or h > height:
-        raise ValueError("Invalid size")
-    xstep = width // w
-    ystep = height // h
+    # 计算每个像素的平均值
+    pixels = list(small_img.getdata())
+    avg_pixel = sum(pixels) // 64
 
-    # 计算像素均值并生成哈希值
-    pixels = []
-    for y in range(h):
-        for x in range(w):
-            pixel = pixel_data[((y * ystep) * width + (x * xstep)) * 3:((y * ystep) * width + (x * xstep)) * 3 + 3]
-            pixels.append(sum(pixel) / 3)
-
-    # 计算平均像素值
-    avg_pixel = sum(pixels) / len(pixels)
-
-    # 生成哈希值
-    hash_value = ""
+    # 将像素值转换为二进制哈希值
+    binary_hash = ''
     for pixel in pixels:
-        if pixel > avg_pixel:
-            hash_value += "1"
+        if pixel >= avg_pixel:
+            binary_hash += '1'
         else:
-            hash_value += "0"
+            binary_hash += '0'
+
+    return binary_hash
+
+
+def p_image_hash(imagePath):
+    #哈希感知算法
+    """
+    Use Perceptual Hash computation to get the image hash.
+    Args:
+        imagePath: image path
+
+    Returns:
+        Image hash value.
+    """
+
+    image = PILImage.open(imagePath).convert('L')
+    # 缩放图像为8x8的尺寸
+    image = image.resize((8, 8), PILImage.Resampling.LANCZOS)
+    # 将图像转换为numpy数组
+    pixels = np.array(image.getdata()).reshape((8, 8))
+    # 计算像素平均值
+    avg_pixel = pixels.mean()
+    # 将像素值与平均值进行比较，生成64位哈希值
+    hash_value = 0
+    for row in range(8):
+        for col in range(8):
+            if pixels[row, col] > avg_pixel:
+                hash_value |= 1 << (row * 8 + col)
     return hash_value
 
-def remove_same_images(directoryPath):
 
+def average_image_hash(imagePath):
+    #哈希平均算法
     """
-    Delete the same images in the directory, and calculate the hash value of the images to identify whether the pictures are the same.
+    The image hash is obtained using the average hash algorithm.
+
+    Args:
+        imagePath: image path.
+    Returns:
+        image hash.
+    """
+
+    hash_size = 8
+    # 加载图像并调整大小
+    with PILImage.open(imagePath) as image:
+        image = image.convert('L').resize((hash_size, hash_size), PILImage.Resampling.LANCZOS)
+
+    # 计算平均灰度值
+    pixels = list(image.getdata())
+    avg = sum(pixels) / len(pixels)
+
+    # 将像素值与平均值进行比较并生成哈希值
+    bits = "".join(['1' if pixel > avg else '0' for pixel in pixels])
+    hash_value = int(bits, 2)
+
+    return hash_value
+
+
+def remove_same_images(directoryPath):
+    #移除相同图片
+    """
+    Delete the same image in the directory and keep only one picture (using local binary value algorithm).
     Supports jpg, png, bmp, webp, jpeg, gif, svg, tif, tiff.
     Args:
         directoryPath: The file directory path
@@ -225,7 +264,7 @@ def remove_same_images(directoryPath):
         filepath = os.path.join(directoryPath, filename)
 
         # 计算图像哈希值
-        hash_value = get_image_hash(filepath)
+        hash_value = lbp_image_hash(filepath)
 
         # 如果哈希值已经存在，则删除图像
         if hash_value in hashes:
@@ -238,7 +277,7 @@ def remove_same_images(directoryPath):
 
 
 def categorize_image(filePath):
-
+    #图片分类
     """
     Categorize your images, support jpg, jpeg, png, webp, bmp, tif, tiff, gif, svg, wmf
     Args:
@@ -308,7 +347,7 @@ def categorize_image(filePath):
 
 
 class Audio:
-
+    #音频类
     """
     You need to pass in the appid, secret-key, and path to the audio file
     """
@@ -374,7 +413,7 @@ class Audio:
 
 
     def voice_to_word(self):
-
+        #音频转文字
         """
         Audio to text,Supports WAV, FLAC, OPUS, M4A, MP3 format audio files,
         If you call this method, you need to pass parameters in the class
