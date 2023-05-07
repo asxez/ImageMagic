@@ -1,9 +1,9 @@
-from ImageMagic._Atesseract import *
+from . import _Atesseract as tess
 from PIL import Image
 
 
 
-def image_to_text(filePath,lang='chi_sim',config='',nice=0,output_type=Output.STRING,timeout=0,):
+def image_to_text(filePath,lang='chi_sim',config='',nice=0,output_type=tess.Output.STRING,timeout=0,):
 
     """
     Gets the text content of the picture
@@ -20,7 +20,7 @@ def image_to_text(filePath,lang='chi_sim',config='',nice=0,output_type=Output.ST
     """
 
     image = Image.open(filePath)
-    text = imageToString(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
+    text = tess.imageToString(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
     return text
 
 
@@ -34,11 +34,11 @@ def check_languages(config=''):
     Returns:
         Supported languages
     """
-    languages = getLanguages(config=config)
+    languages = tess.getLanguages(config=config)
     return languages
 
 
-def get_image_boxs(filePath,lang='chi_sim',config='',nice=0,output_type=Output.STRING,timeout=0):
+def get_image_boxs(filePath,lang='chi_sim',config='',nice=0,output_type=tess.Output.STRING,timeout=0):
 
     """
     Gets an estimate of the picture bounding box
@@ -54,11 +54,11 @@ def get_image_boxs(filePath,lang='chi_sim',config='',nice=0,output_type=Output.S
         Border estimate
     """
     image = Image.open(filePath)
-    boxs = imageToBoxes(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
+    boxs = tess.imageToBoxes(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
     return boxs
 
 
-def get_image_osd(filePath,lang='chi_sim',config='',nice=0,output_type=Output.STRING,timeout=0):
+def get_image_osd(filePath,lang='chi_sim',config='',nice=0,output_type=tess.Output.STRING,timeout=0):
 
     """
     Get information about orientation and script detection
@@ -75,11 +75,11 @@ def get_image_osd(filePath,lang='chi_sim',config='',nice=0,output_type=Output.ST
     """
 
     image = Image.open(filePath)
-    osd = imageToOsd(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
+    osd = tess.imageToOsd(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
     return osd
 
 
-def get_image_data(filePath,lang='chi_sim',config='',nice=0,output_type=Output.STRING,timeout=0):
+def get_image_data(filePath,lang='chi_sim',config='',nice=0,output_type=tess.Output.STRING,timeout=0):
 
     """
     Get image details, including boxes, confidence, line numbers, and page numbers.
@@ -97,7 +97,7 @@ def get_image_data(filePath,lang='chi_sim',config='',nice=0,output_type=Output.S
     """
 
     image = Image.open(filePath)
-    data = imageToData(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
+    data = tess.imageToData(image,lang=lang,config=config,nice=nice,output_type=output_type,timeout=timeout)
     return data
 
 
@@ -117,7 +117,7 @@ def image_to_pdf(imagePath,savePath,lang='chi_sim',config='',nice=0,timeout=0):
         None
     """
 
-    pdf = imageToPdfOrHocr(imagePath,lang=lang,config=config,nice=nice,extension='pdf',timeout=timeout)
+    pdf = tess.imageToPdfOrHocr(imagePath,lang=lang,config=config,nice=nice,extension='pdf',timeout=timeout)
     with open(savePath,'wb') as f:
         f.write(pdf)
 
@@ -136,7 +136,7 @@ def image_to_hocr(filePath,lang='chi_sim',config='',nice=0,timeout=0):
         HOCR
     """
 
-    hocr = imageToPdfOrHocr(filePath,lang=lang,config=config,extension='hocr',nice=nice,timeout=timeout)
+    hocr = tess.imageToPdfOrHocr(filePath,lang=lang,config=config,extension='hocr',nice=nice,timeout=timeout)
     return hocr
 
 def image_to_AltoXml(filePath,lang='chi_sim',config='',nice=0,timeout=0):
@@ -154,6 +154,5 @@ def image_to_AltoXml(filePath,lang='chi_sim',config='',nice=0,timeout=0):
         Returns the result of a Tesseract OCR run on the provided image to ALTO XML
     """
 
-    xml = imageToAltoXml(filePath,lang=lang,config=config,nice=nice,timeout=timeout)
+    xml = tess.imageToAltoXml(filePath,lang=lang,config=config,nice=nice,timeout=timeout)
     return xml
-
