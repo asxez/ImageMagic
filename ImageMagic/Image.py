@@ -215,6 +215,59 @@ def p_image_hash(imagePath):
     return hash_value
 
 
+def pca_image_hash(imagePath):
+    #主成分分析算法
+    """
+    The principal component analysis algorithm calculates the image hash value.
+    Args:
+        imagePath: image path
+    Returns:
+        The hash value of the image.
+    """
+
+    image = PILImage.open(imagePath).convert('L')
+    image = image.resize((16,16))
+
+    image_array = np.array(image.getdata()).reshape(image.size)
+    flattened_array = image_array.flatten()
+    flattened_array = np.expand_dims(flattened_array, axis=0)
+
+    num_components = 64
+    u, s, vh = np.linalg.svd(flattened_array - flattened_array.mean())
+    components = vh[:num_components]
+
+    #转换为二进制
+    pca_hash = np.packbits(components >= 0).tobytes()
+
+    return pca_hash
+
+
+def fft_image_hash(imagePath):
+    #离散傅里叶变换算法
+    """
+    The Fourier transform algorithm finds the hash value.
+    Args:
+        imagePath: image path
+    Returns:
+        Image hash value.
+    """
+
+    image = PILImage.open(imagePath)
+    resized_image = image.resize((32,32)).convert('L')
+
+    #进行离散傅里叶变换
+    pixels = np.asarray(resized_image.getdata(),dtype=float).reshape(resized_image.size)
+    transformed_image = np.fft.fft2(pixels)
+
+    magnitudes = np.abs(transformed_image)
+    average_magnitude = np.mean(magnitudes)
+    hash_value = np.zeros_like(magnitudes, dtype=int)
+    hash_value[magnitudes >= average_magnitude] = 1
+
+    #返回二进制数据，方便直接比较
+    return hash_value.flatten().tobytes()
+
+
 def average_image_hash(imagePath):
     #哈希平均算法
     """

@@ -1,6 +1,6 @@
 """
 # Copyright 2023 ASXE. All rights reserved.
-Use ImageMagic.__version for this ImageMagic version
+Use ImageMagic._version for this ImageMagic version
 """
 
 
