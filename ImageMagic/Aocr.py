@@ -1,6 +1,6 @@
-from . import _Atesseract as tess
 from PIL import Image
 
+from . import _Atesseract as tess
 
 
 def image_to_text(filePath,lang='chi_sim',config='',nice=0,output_type=tess.Output.STRING,timeout=0,):

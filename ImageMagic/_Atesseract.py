@@ -18,8 +18,8 @@ from os.path import realpath
 from pkgutil import find_loader
 from tempfile import NamedTemporaryFile
 from time import sleep
-from PIL import Image
 
+from PIL import Image
 
 tesseract_cmd = 'tesseract'
 
@@ -57,7 +57,6 @@ OSD_KEYS = {
 }
 
 
-
 class Output:
     BYTES = 'bytes'
     DATAFRAME = 'data.frame'
@@ -79,11 +78,14 @@ class TesseractError(RuntimeError):
 
 class TesseractNotFoundError(EnvironmentError):
     def __init__(self):
-        super().__init__(f"{tesseract_cmd} is not installed or it's not in your PATH.See README file for more information.")
+        super().__init__(
+            f"{tesseract_cmd} is not installed or it's not in your PATH.See README file for more information.")
+
 
 class TSVNotSupported(EnvironmentError):
     def __init__(self):
         super().__init__('TSV output not supported. Tesseract >= 3.05 required')
+
 
 class ALTONotSupported(EnvironmentError):
     def __init__(self):
@@ -101,6 +103,7 @@ def kill(process, code):
     finally:
         process.kill()
         process.returncode = code
+
 
 @contextmanager
 def timeout_manager(proc, seconds=None):
@@ -134,6 +137,7 @@ def run_once(func):
 
 def get_errors(error_string):
     return ' '.join(line for line in error_string.decode(DEFAULT_ENCODING).splitlines()).strip()
+
 
 def cleanup(temp_name):
     """Tries to remove temp files by filename wildcard path."""
@@ -205,13 +209,13 @@ def subprocess_args(include_stdout=True):
 
 
 def runTesseract(
-    input_filename,
-    output_filename_base,
-    extension,
-    lang,
-    config='',
-    nice=0,
-    timeout=0,
+        input_filename,
+        output_filename_base,
+        extension,
+        lang,
+        config='',
+        nice=0,
+        timeout=0,
 ):
     cmd_args = []
 
@@ -243,15 +247,14 @@ def runTesseract(
 
 
 def runAndGetOutPut(
-    image,
-    extension='',
-    lang=None,
-    config='',
-    nice=0,
-    timeout=0,
-    return_bytes=False,
+        image,
+        extension='',
+        lang=None,
+        config='',
+        nice=0,
+        timeout=0,
+        return_bytes=False,
 ):
-
     with save(image) as (temp_name, input_filename):
         kwargs = {
             'input_filename': input_filename,
@@ -335,7 +338,7 @@ def getLanguages(config=''):
         cmd_args += shlex.split(config)
 
     try:
-        result = subprocess.run(cmd_args,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        result = subprocess.run(cmd_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except OSError:
         raise TesseractNotFoundError()
 
@@ -354,12 +357,12 @@ def getLanguages(config=''):
 
 
 def imageToString(
-    image,
-    lang=None,
-    config='',
-    nice=0,
-    output_type=Output.STRING,
-    timeout=0,
+        image,
+        lang=None,
+        config='',
+        nice=0,
+        output_type=Output.STRING,
+        timeout=0,
 ):
     """
     Returns the result of a Tesseract OCR run on the provided image to string
@@ -374,12 +377,12 @@ def imageToString(
 
 
 def imageToPdfOrHocr(
-    image,
-    lang=None,
-    config='',
-    nice=0,
-    extension='pdf',
-    timeout=0,
+        image,
+        lang=None,
+        config='',
+        nice=0,
+        extension='pdf',
+        timeout=0,
 ):
     """
     Returns the result of a Tesseract OCR run on the provided image to pdf/hocr
@@ -393,11 +396,11 @@ def imageToPdfOrHocr(
 
 
 def imageToAltoXml(
-    image,
-    lang=None,
-    config='',
-    nice=0,
-    timeout=0,
+        image,
+        lang=None,
+        config='',
+        nice=0,
+        timeout=0,
 ):
     """
     Returns the result of a Tesseract OCR run on the provided image to ALTO XML
@@ -410,12 +413,12 @@ def imageToAltoXml(
 
 
 def imageToBoxes(
-    image,
-    lang=None,
-    config='',
-    nice=0,
-    output_type=Output.STRING,
-    timeout=0,
+        image,
+        lang=None,
+        config='',
+        nice=0,
+        output_type=Output.STRING,
+        timeout=0,
 ):
     """
     Returns string containing recognized characters and their box boundaries
@@ -444,13 +447,13 @@ def getPandasOutPut(args, config=None):
 
 
 def imageToData(
-    image,
-    lang=None,
-    config='',
-    nice=0,
-    output_type=Output.STRING,
-    timeout=0,
-    pandas_config=None,
+        image,
+        lang=None,
+        config='',
+        nice=0,
+        output_type=Output.STRING,
+        timeout=0,
+        pandas_config=None,
 ):
     """
     Returns string containing box boundaries, confidences,
@@ -472,12 +475,12 @@ def imageToData(
 
 
 def imageToOsd(
-    image,
-    lang='osd',
-    config='',
-    nice=0,
-    output_type=Output.STRING,
-    timeout=0,
+        image,
+        lang='osd',
+        config='',
+        nice=0,
+        output_type=Output.STRING,
+        timeout=0,
 ):
     """
     Returns string containing the orientation and script detection (OSD)
@@ -490,4 +493,3 @@ def imageToOsd(
         Output.DICT: lambda: osdToDict(runAndGetOutPut(*args)),
         Output.STRING: lambda: runAndGetOutPut(*args),
     }[output_type]()
-

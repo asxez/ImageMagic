@@ -6,8 +6,8 @@ Use ImageMagic._version for this ImageMagic version
 
 
 from __future__ import annotations
-from ._version import *
 
+from ._version import *
 
 __version__ = _version.__version__
 __releasedate__ = _version.__releasedate__

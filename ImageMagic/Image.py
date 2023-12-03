@@ -1,24 +1,26 @@
-from PIL import ImageDraw,ImageFont
-from PIL import Image as PILImage
-import re
-import requests
-import json
+import base64
 import hashlib
 import hmac
-import base64
-import time
+import json
 import os
-from loguru import logger
+import re
 import shutil
-import numpy as np
+import time
 
-#They are used in the Audio class
+import numpy as np
+import requests
+from PIL import Image as PILImage
+from PIL import ImageDraw, ImageFont
+from loguru import logger
+
+# They are used in the Audio class
 RESULT = None
 ANSWER = None
 
 
-def word_to_image(text, path, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF', LinesWords=14, fontsize=45, type='png', color=(255, 255, 255)):
-    #文字转图片
+def word_to_image(text, path, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF', LinesWords=14, fontsize=45, type='png',
+                  color=(255, 255, 255)):
+    # 文字转图片
     """
     Let the text you enter appear on an image,
     Your text word count should preferably be greater than or equal to 10!（In cases where you use the default font size）
@@ -41,30 +43,31 @@ def word_to_image(text, path, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF', LinesWor
     text = re.sub(f"(.{{{LinesWords}}})", "\\1\r\n", text)
     if os.path.isfile('temp.txt'):
         pass
-    with open('temp.txt','w',encoding='utf-8') as f:
+    with open('temp.txt', 'w', encoding='utf-8') as f:
         f.write(text)
-    with open('temp.txt','r',encoding='utf-8') as f:
-        temp_text=f.readlines()
+    with open('temp.txt', 'r', encoding='utf-8') as f:
+        temp_text = f.readlines()
     for i, s in enumerate(temp_text):
         if len(s) > max_len:
             max_len = len(s)
     fontSize = 50
     liens = text.split('\n')
     image = PILImage.new('RGB', ((fontSize * max_len), len(liens) * (fontSize + 5)), color)
-    font = ImageFont.truetype(fontPath,fontsize)
+    font = ImageFont.truetype(fontPath, fontsize)
     draw = ImageDraw.Draw(image)
-    draw.text((40,5), text=text, font=font,fill='#000000')
+    draw.text((40, 5), text=text, font=font, fill='#000000')
 
     try:
         image.save(path, type)
     except FileNotFoundError as error:
-        logger.error(f'Please check your file path, you need to enter a full path, including your file name (even the suffix!).\nerror:{error}')
+        logger.error(
+            f'Please check your file path, you need to enter a full path, including your file name (even the suffix!).\nerror:{error}')
 
     os.remove('temp.txt')
 
 
-def audio_to_image(appid,key,audioPath,imagePath,fontPath=r'C:\Windows\Fonts\STXIHEI.TTF'):
-    #音频转图片
+def audio_to_image(appid, key, audioPath, imagePath, fontPath=r'C:\Windows\Fonts\STXIHEI.TTF'):
+    # 音频转图片
     """
     Supports WAV, FLAC, OPUS, M4A, MP3 format audio files,
     Convert audio content into pictures, do you find this method a bit strange?
@@ -80,17 +83,18 @@ def audio_to_image(appid,key,audioPath,imagePath,fontPath=r'C:\Windows\Fonts\STX
         None
     """
 
-    audio = Audio(appid=appid,key=key,upload_file_path=audioPath)
+    audio = Audio(appid=appid, key=key, upload_file_path=audioPath)
     get_list = audio.voice_to_word()
     get_text = ''.join(get_list)
     try:
-        word_to_image(get_text,imagePath,fontPath)
+        word_to_image(get_text, imagePath, fontPath)
     except FileNotFoundError as error:
-        logger.error(f'Please check your file path, you need to enter a full path, including your file name (even the suffix!).\nerror:{error}')
+        logger.error(
+            f'Please check your file path, you need to enter a full path, including your file name (even the suffix!).\nerror:{error}')
 
 
-def convert(originFilePath,format,savePath,mode=None):
-    #图片格式转换
+def convert(originFilePath, format, savePath, mode=None):
+    # 图片格式转换
     """
     Picture format conversion, the current version supports all possible conversions between "L", "RGB" and "CMYK".
     Args:
@@ -104,11 +108,11 @@ def convert(originFilePath,format,savePath,mode=None):
     """
 
     image = PILImage.open(originFilePath).convert(mode=mode)
-    image.save(savePath,format=format)
+    image.save(savePath, format=format)
 
 
-def equal_scale_image(filePath,savePath,multiple=1):
-    #图片等比例变化
+def equal_scale_image(filePath, savePath, multiple=1):
+    # 图片等比例变化
     """
     Change your image in equal proportions
     Args:
@@ -127,8 +131,8 @@ def equal_scale_image(filePath,savePath,multiple=1):
     img.save(savePath)
 
 
-def customize_image(filePath,savePath,new_width=None,new_height=None):
-    #自定义图片分辨率
+def customize_image(filePath, savePath, new_width=None, new_height=None):
+    # 自定义图片分辨率
     """
     Custom image size (if no input is used, the original parameter will be used)
     Args:
@@ -147,16 +151,16 @@ def customize_image(filePath,savePath,new_width=None,new_height=None):
     if new_width is None:
         img = img.resize((int(width), int(new_height)), PILImage.Resampling.LANCZOS)
     if new_height is None:
-        img = img.resize((int(new_width,int(height)),PILImage.Resampling.LANCZOS))
+        img = img.resize((int(new_width, int(height)), PILImage.Resampling.LANCZOS))
     if new_width is None and new_height is None:
-        img = img.resize((int(width),int(height)),PILImage.Resampling.LANCZOS)
+        img = img.resize((int(width), int(height)), PILImage.Resampling.LANCZOS)
     else:
-        img = img.resize((int(new_width),int(new_height)),PILImage.Resampling.LANCZOS)
+        img = img.resize((int(new_width), int(new_height)), PILImage.Resampling.LANCZOS)
     img.save(savePath)
 
 
 def lbp_image_hash(imagePath):
-    #哈希局部二值算法
+    # 哈希局部二值算法
     """
     The local binary algorithm calculates the hash value.
     Args:
@@ -189,7 +193,7 @@ def lbp_image_hash(imagePath):
 
 
 def p_image_hash(imagePath):
-    #哈希感知算法
+    # 哈希感知算法
     """
     Use Perceptual Hash computation to get the image hash.
     Args:
@@ -216,7 +220,7 @@ def p_image_hash(imagePath):
 
 
 def pca_image_hash(imagePath):
-    #主成分分析算法
+    # 主成分分析算法
     """
     The principal component analysis algorithm calculates the image hash value.
     Args:
@@ -226,7 +230,7 @@ def pca_image_hash(imagePath):
     """
 
     image = PILImage.open(imagePath).convert('L')
-    image = image.resize((16,16))
+    image = image.resize((16, 16))
 
     image_array = np.array(image.getdata()).reshape(image.size)
     flattened_array = image_array.flatten()
@@ -236,14 +240,14 @@ def pca_image_hash(imagePath):
     u, s, vh = np.linalg.svd(flattened_array - flattened_array.mean())
     components = vh[:num_components]
 
-    #转换为二进制
+    # 转换为二进制
     pca_hash = np.packbits(components >= 0).tobytes()
 
     return pca_hash
 
 
 def fft_image_hash(imagePath):
-    #离散傅里叶变换算法
+    # 离散傅里叶变换算法
     """
     The Fourier transform algorithm finds the hash value.
     Args:
@@ -253,10 +257,10 @@ def fft_image_hash(imagePath):
     """
 
     image = PILImage.open(imagePath)
-    resized_image = image.resize((32,32)).convert('L')
+    resized_image = image.resize((32, 32)).convert('L')
 
-    #进行离散傅里叶变换
-    pixels = np.asarray(resized_image.getdata(),dtype=float).reshape(resized_image.size)
+    # 进行离散傅里叶变换
+    pixels = np.asarray(resized_image.getdata(), dtype=float).reshape(resized_image.size)
     transformed_image = np.fft.fft2(pixels)
 
     magnitudes = np.abs(transformed_image)
@@ -264,12 +268,12 @@ def fft_image_hash(imagePath):
     hash_value = np.zeros_like(magnitudes, dtype=int)
     hash_value[magnitudes >= average_magnitude] = 1
 
-    #返回二进制数据，方便直接比较
+    # 返回二进制数据，方便直接比较
     return hash_value.flatten().tobytes()
 
 
 def average_image_hash(imagePath):
-    #哈希平均算法
+    # 哈希平均算法
     """
     The image hash is obtained using the average hash algorithm.
 
@@ -296,7 +300,7 @@ def average_image_hash(imagePath):
 
 
 def remove_same_images(directoryPath):
-    #移除相同图片
+    # 移除相同图片
     """
     Delete the same image in the directory and keep only one picture (using local binary value algorithm).
     Supports jpg, png, bmp, webp, jpeg, gif, svg, tif, tiff.
@@ -312,7 +316,7 @@ def remove_same_images(directoryPath):
 
     # 遍历目录中的所有图像
     for filename in os.listdir(directoryPath):
-        if not filename.endswith((".jpg", ".png", ".bmp",".webp",".jpeg",".gif","svg","tif","tiff")):
+        if not filename.endswith((".jpg", ".png", ".bmp", ".webp", ".jpeg", ".gif", "svg", "tif", "tiff")):
             continue
         filepath = os.path.join(directoryPath, filename)
 
@@ -330,7 +334,7 @@ def remove_same_images(directoryPath):
 
 
 def categorize_image(filePath):
-    #图片分类
+    # 图片分类
     """
     Categorize your images, support jpg, jpeg, png, webp, bmp, tif, tiff, gif, svg, wmf
     Args:
@@ -366,46 +370,46 @@ def categorize_image(filePath):
                 os.makedirs(f'{filePath}/bmp')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/bmp')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/bmp')
         elif ext == 'tif' or ext == 'tiff':
             try:
                 os.makedirs(f'{filePath}/tif')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/tif')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/tif')
         elif ext == 'gif':
             try:
                 os.makedirs(f'{filePath}/gif')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/gif')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/gif')
         elif ext == 'svg':
             try:
                 os.makedirs(f'{filePath}/svg')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/svg')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/svg')
         elif ext == 'wmf':
             try:
                 os.makedirs(f'{filePath}/wmf')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/wmf')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/wmf')
         else:
             try:
                 os.makedirs(f'{filePath}/another')
             except FileExistsError:
                 pass
-            shutil.copy(os.path.join(filePath,filename),f'{filePath}/another')
+            shutil.copy(os.path.join(filePath, filename), f'{filePath}/another')
 
 
 class Audio:
-    #音频类
+    # 音频类
     """
     You need to pass in the appid, secret-key, and path to the audio file
     """
 
-    def __init__(self,appid,key,upload_file_path):
+    def __init__(self, appid, key, upload_file_path):
 
         """
         Args:
@@ -424,7 +428,6 @@ class Audio:
             'Content-Type': 'application/json'
         }
 
-
     def __get_signa(self):
 
         """
@@ -438,9 +441,9 @@ class Audio:
         base_string_md5 = hashlib.md5()
         base_string_md5.update(base_string.encode('utf-8'))
         base_string_md5 = base_string_md5.hexdigest()
-        signa = hmac.new(key.encode('utf-8'),bytes(base_string_md5,'utf-8'),hashlib.sha1).digest()
+        signa = hmac.new(key.encode('utf-8'), bytes(base_string_md5, 'utf-8'), hashlib.sha1).digest()
         signa = base64.b64encode(signa)
-        return str(signa,'utf-8')
+        return str(signa, 'utf-8')
 
     def __upload(self):
 
@@ -456,17 +459,16 @@ class Audio:
         data['fileSize'] = file_size
         data['fileName'] = file_name
 
-        with open(upload_file_path,'rb') as f:
+        with open(upload_file_path, 'rb') as f:
             documents = f.read(file_size)
 
-        response = requests.post(self.__uploadlinks,params=data,headers=self.__header,data=documents)
+        response = requests.post(self.__uploadlinks, params=data, headers=self.__header, data=documents)
         result = json.loads(response.text)
-        #print(result)
+        # print(result)
         return result
 
-
     def voice_to_word(self):
-        #音频转文字
+        # 音频转文字
         """
         Audio to text,Supports WAV, FLAC, OPUS, M4A, MP3 format audio files,
         If you call this method, you need to pass parameters in the class
@@ -474,12 +476,12 @@ class Audio:
             A list of results
         """
 
-        global RESULT,ANSWER
-        ANSWER_LIST=[]
+        global RESULT, ANSWER
+        ANSWER_LIST = []
 
         upload_result = self.__upload()
         orderId = upload_result['content']['orderId']
-        data={}
+        data = {}
         data['appId'] = self.__appid
         data['signa'] = self.__get_signa()
         data['ts'] = self.__ts
@@ -495,7 +497,7 @@ class Audio:
         """
         # 使用回调的方式查询结果，查询接口有请求频率限制
         while status == 3:
-            response = requests.post(self.__getresult,params=data,headers=self.__header)
+            response = requests.post(self.__getresult, params=data, headers=self.__header)
             RESULT = json.loads(response.text)
             status = RESULT['content']['orderInfo']['status']
             if status == 4:
@@ -514,7 +516,7 @@ class Audio:
             for i in d:
                 # print(i)
                 ANSWER = i.get('cw')[0].get('w')
-                #print(ANSWER, end='')
+                # print(ANSWER, end='')
                 ANSWER_LIST.append(ANSWER)
 
         return ANSWER_LIST

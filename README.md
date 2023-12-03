@@ -1,11 +1,11 @@
 <div align="center">
-  <img src="https://i.328888.xyz/2023/05/04/iPlOg8.png" width="500" height="450" alt=""><br>
+<h1>ImageMagic</h1>
+<p>一个简洁的图像（包括但不限于）处理库</p>
 </div>
 
 [DOCS in English](https://github.com/asxez/ImageMagic/blob/master/README_EN.md)
 
-# ImageMagic:一个简洁的图像（包括但不限于）处理库
-[![Pypi](https://img.shields.io/badge/pypi-0.1.9-blue)]()
+[![Pypi](https://img.shields.io/badge/pypi-0.2.1-blue)]()
 [![License](https://img.shields.io/badge/license-GPL3.0-green)]()
 [![Python](https://img.shields.io/badge/python-3.10%2B-yellow)]()
 
